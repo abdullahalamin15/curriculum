@@ -1,3 +1,5 @@
+const { getFenceLineRanges, isWithinLineRanges } = require("../shared/fenceUtils");
+
 module.exports = {
   names: ["TOP005", "blanks-around-multiline-html-tags"],
   description: "Multiline HTML tags should be surrounded by blank lines or code block delimiters",
@@ -13,17 +15,10 @@ module.exports = {
      * or md code block examples of such.
      */
     const IGNORED_FENCE_TYPES = ["html", "jsx", "erb", "ejs", "ruby", "javascript"];
-    const ignoredFencesLineRanges = params.parsers.markdownit.tokens
-      .filter((token) => {
-        return token.type === "fence" && IGNORED_FENCE_TYPES.includes(token.info);
-      })
-      .map((token) => token.map);
-
-    const isWithinIgnoredFence = (lineNumber) => {
-      return ignoredFencesLineRanges.some(
-        (range) => range[0] < lineNumber && lineNumber < range[1]
-      );
-    };
+    const ignoredFencesLineRanges = getFenceLineRanges(
+      params.parsers.markdownit.tokens,
+      (token) => IGNORED_FENCE_TYPES.includes(token.info)
+    );
 
     const isolatedHtmlTagsLineNumbers = params.lines.reduce(
       (lineNumbers, currentLineText, currentLineNumber) => {
@@ -37,7 +32,7 @@ module.exports = {
     );
 
     isolatedHtmlTagsLineNumbers.forEach((lineNumber, i) => {
-      if (isWithinIgnoredFence(lineNumber)) {
+      if (isWithinLineRanges(lineNumber, ignoredFencesLineRanges)) {
         return;
       }
 
