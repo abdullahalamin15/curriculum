@@ -10,6 +10,9 @@ module.exports = {
     const tokensWithLinks = params.parsers.markdownit.tokens?.filter((token) =>
       token.children?.some((child) => child.type === "link_open")
     );
+    if (!tokensWithLinks?.length) {
+      return;
+    }
     const childrenOfTokensWithLinks = tokensWithLinks
       .map((tokenWithLink) => tokenWithLink.children)
       .flat();
@@ -35,7 +38,7 @@ module.exports = {
         linkContentString
       );
       if (isInvalid) {
-        const linkUrl = tokensAfterLinkOpen[0].attrs[0][1];
+        const linkUrl = tokensAfterLinkOpen[0].attrs?.[0]?.[1] ?? "";
         onError({
           lineNumber: tokensAfterLinkOpen[0].lineNumber,
 					detail: `Expected text to not include the words "this" or "here". Use a more descriptive text that clearly conveys the purpose or content of the link.`,

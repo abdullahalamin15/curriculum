@@ -58,9 +58,13 @@ module.exports = {
       const anchorsInCurrentLine = currentLine.match(anchorsWithHrefRegex);
 
       anchorsInCurrentLine?.forEach((anchor) => {
+        const href = extractHref(anchor);
+        if (!href) {
+          return;
+        }
         anchors.push({
           original: anchor,
-          href: extractHref(anchor),
+          href,
           text: extractLinkText(anchor),
           length: anchor.length,
           lineNumber: index + 1,

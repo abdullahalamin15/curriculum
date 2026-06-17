@@ -12,11 +12,17 @@ module.exports = {
         tokenArray[currIndex - 1]?.type === "heading_open" &&
         token.children?.some((child) => child.type === "code_inline")
     );
+    if (!headingsWithCode?.length) {
+      return;
+    }
 
     const codeContent = [];
     headingsWithCode.forEach((heading) => {
       // https://regexr.com/7uk28 to test the following regex
       const codeMatches = heading.line.match(/`.+?`/g);
+      if (!codeMatches) {
+        return;
+      }
       const codeContentDetails = codeMatches.map((codeMatch) => {
         const index = heading.line.indexOf(codeMatch);
 
