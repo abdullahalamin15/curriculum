@@ -590,9 +590,15 @@ The Civic Information API allows registered individuals (registration is free) t
 
 #### Accessing the API
 
+<div class="lesson-note lesson-note--tip" markdown="1">
+
+You will need your own API key for the Google Civic Information API. Visit the [Google Cloud Console](https://console.cloud.google.com/apis/credentials), create a project, enable the **Google Civic Information API**, and generate an API key. Store the key in an environment variable (e.g. `GOOGLE_CIVIC_INFO_API_KEY`) rather than hardcoding it in your source files.
+
+</div>
+
 Take a close look at this sample URL for accessing the Civic Information API:
 
-[https://www.googleapis.com/civicinfo/v2/representatives?address=80203&levels=country&roles=legislatorUpperBody&roles=legislatorLowerBody&key=AIzaSyClRzDqDh5MsXwnCWi0kOiiBivP6JsSyBw](https://www.googleapis.com/civicinfo/v2/representatives?address=80203&levels=country&roles=legislatorUpperBody&roles=legislatorLowerBody&key=AIzaSyClRzDqDh5MsXwnCWi0kOiiBivP6JsSyBw)
+[https://www.googleapis.com/civicinfo/v2/representatives?address=80203&levels=country&roles=legislatorUpperBody&roles=legislatorLowerBody&key=YOUR_GOOGLE_CIVIC_INFO_API_KEY](https://www.googleapis.com/civicinfo/v2/representatives?address=80203&levels=country&roles=legislatorUpperBody&roles=legislatorLowerBody&key=YOUR_GOOGLE_CIVIC_INFO_API_KEY)
 
 Here's how it breaks down:
 
@@ -605,7 +611,7 @@ Here's how it breaks down:
   - `levels=country` : The level of government we want to select
   - `roles=legislatorUpperBody` : Return the representatives from the Senate
   - `roles=legislatorLowerBody` : Returns the representatives from the House
-  - `key=AIzaSyClRzDqDh5MsXwnCWi0kOiiBivP6JsSyBw` : A registered API Key to authenticate our requests
+  - `key=YOUR_GOOGLE_CIVIC_INFO_API_KEY` : A registered API Key to authenticate our requests
 
 When we're accessing the `representatives` method of their API, we're sending in a `key` which is the string that identifies JumpstartLab as the accessor of the API, then we're selecting the data we want returned to us using the `address`, `levels`, and `roles` criteria. Try modifying the address with your own zipcode and load the page.
 
@@ -647,8 +653,8 @@ $ require 'google/apis/civicinfo_v2'
 $ civic_info = Google::Apis::CivicinfoV2::CivicInfoService.new
 => #<Google::Apis::CivicinfoV2::CivicInfoService:0x007faf2dd47108 ... >
 
-$ civic_info.key = 'AIzaSyClRzDqDh5MsXwnCWi0kOiiBivP6JsSyBw'
-=> "AIzaSyClRzDqDh5MsXwnCWi0kOiiBivP6JsSyBw"
+$ civic_info.key = 'YOUR_GOOGLE_CIVIC_INFO_API_KEY'
+=> "YOUR_GOOGLE_CIVIC_INFO_API_KEY"
 
 $ response = civic_info.representative_info_by_address(address: 80202, levels: 'country', roles: ['legislatorUpperBody', 'legislatorLowerBody'])
 => #<Google::Apis::CivicinfoV2::RepresentativeInfoResponse:0x007faf2d9088d0 @divisions={"ocd-division/country:us/state:co"=>#<Google::Apis::CivicinfoV2::GeographicDivision:0x007faf2e55ea80 @name="Colorado", @office_indices=[0]> } > ...continues...
@@ -661,7 +667,7 @@ require 'csv'
 require 'google/apis/civicinfo_v2'
 
 civic_info = Google::Apis::CivicinfoV2::CivicInfoService.new
-civic_info.key = 'AIzaSyClRzDqDh5MsXwnCWi0kOiiBivP6JsSyBw'
+civic_info.key = 'YOUR_GOOGLE_CIVIC_INFO_API_KEY'
 
 def clean_zipcode(zipcode)
   zipcode.to_s.rjust(5, '0')[0..4]
@@ -705,7 +711,7 @@ require 'csv'
 require 'google/apis/civicinfo_v2'
 
 civic_info = Google::Apis::CivicinfoV2::CivicInfoService.new
-civic_info.key = 'AIzaSyClRzDqDh5MsXwnCWi0kOiiBivP6JsSyBw'
+civic_info.key = 'YOUR_GOOGLE_CIVIC_INFO_API_KEY'
 
 def clean_zipcode(zipcode)
   zipcode.to_s.rjust(5, '0')[0..4]
@@ -855,7 +861,7 @@ end
 
 def legislators_by_zipcode(zip)
   civic_info = Google::Apis::CivicinfoV2::CivicInfoService.new
-  civic_info.key = 'AIzaSyClRzDqDh5MsXwnCWi0kOiiBivP6JsSyBw'
+  civic_info.key = 'YOUR_GOOGLE_CIVIC_INFO_API_KEY'
 
   begin
     legislators = civic_info.representative_info_by_address(
@@ -1126,7 +1132,7 @@ end
 
 def legislators_by_zipcode(zip)
   civic_info = Google::Apis::CivicinfoV2::CivicInfoService.new
-  civic_info.key = 'AIzaSyClRzDqDh5MsXwnCWi0kOiiBivP6JsSyBw'
+  civic_info.key = 'YOUR_GOOGLE_CIVIC_INFO_API_KEY'
 
   begin
     civic_info.representative_info_by_address(
@@ -1180,7 +1186,7 @@ erb_template = ERB.new template_letter
 ```ruby
 def legislators_by_zipcode(zip)
   civic_info = Google::Apis::CivicinfoV2::CivicInfoService.new
-  civic_info.key = 'AIzaSyClRzDqDh5MsXwnCWi0kOiiBivP6JsSyBw'
+  civic_info.key = 'YOUR_GOOGLE_CIVIC_INFO_API_KEY'
 
   begin
     civic_info.representative_info_by_address(
@@ -1259,7 +1265,7 @@ end
 
 def legislators_by_zipcode(zip)
   civic_info = Google::Apis::CivicinfoV2::CivicInfoService.new
-  civic_info.key = 'AIzaSyClRzDqDh5MsXwnCWi0kOiiBivP6JsSyBw'
+  civic_info.key = 'YOUR_GOOGLE_CIVIC_INFO_API_KEY'
 
   begin
     civic_info.representative_info_by_address(
