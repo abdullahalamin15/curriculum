@@ -81,7 +81,7 @@ function getListSectionErrors(sectionTokens, section) {
       )
     );
   }
-  if (defaultContentOpenTokenIndex === -1) {
+  if (defaultContentOpenTokenIndex === -1 && tokensAfterHeading.length) {
     const sectionStartsWithList = tokensAfterHeading[0].line.startsWith("- ");
     const errorDetail = sectionStartsWithList
       ? `Expect default content to precede unordered list of ${listItemsName}: "${listSectionsDefaultContent[section]}"`
@@ -193,7 +193,7 @@ function getAssignmentSectionErrors(sectionTokens) {
       token.content.includes(`class="lesson-content__panel"`) &&
       token.content.includes(`markdown="1"`)
   );
-  if (!divBlockTokens || !hasAssignmentDiv) {
+  if (!divBlockTokens.length || !hasAssignmentDiv) {
     assignmentErrors.push(
       createErrorObject(
         sectionTokens[0].lineNumber,
