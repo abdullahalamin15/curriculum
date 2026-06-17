@@ -1,3 +1,5 @@
+const { createError } = require("../shared/errorHelpers");
+
 const sectionsWithDefaultContent = {
   lessonOverview: "lesson overview",
   assignment: "assignment",
@@ -12,14 +14,6 @@ const listSectionsDefaultContent = {
   [sectionsWithDefaultContent.additionalResources]:
     "This section contains helpful links to related content. It isn't required, so consider it supplemental.",
 };
-
-function createErrorObject(lineNumber, detail, fixInfo = {}) {
-  return {
-    lineNumber,
-    detail,
-    fixInfo,
-  };
-}
 
 function getListSectionErrors(sectionTokens, section) {
   const WHOLE_LINE = -1;
@@ -39,7 +33,7 @@ function getListSectionErrors(sectionTokens, section) {
     listSectionErrors.push(
       // We're not applying a fix because we can't always know whether just un-nesting the list
       // will resolve the issue. There may be entire list items that need to be removed as well.
-      createErrorObject(
+      createError(
         nestedListItemToken.lineNumber,
         `The ${section} section must not contain nested lists.`
       )
@@ -54,7 +48,7 @@ function getListSectionErrors(sectionTokens, section) {
   );
   orderedListItemTokens.forEach((orderedListItemToken) => {
     listSectionErrors.push(
-      createErrorObject(
+      createError(
         orderedListItemToken.lineNumber,
         `The ${section} section must not include any ordered lists.`,
         {
@@ -75,7 +69,7 @@ function getListSectionErrors(sectionTokens, section) {
     const defaultContentToken =
       tokensAfterHeading[defaultContentOpenTokenIndex];
     listSectionErrors.push(
-      createErrorObject(
+      createError(
         defaultContentToken.lineNumber,
         `Expected default section content to come immediately after the ${section} heading.`
       )
@@ -93,7 +87,7 @@ function getListSectionErrors(sectionTokens, section) {
     }
 
     listSectionErrors.push(
-      createErrorObject(tokensAfterHeading[0].lineNumber, errorDetail, {
+      createError(tokensAfterHeading[0].lineNumber, errorDetail, {
         lineNumber: tokensAfterHeading[0].lineNumber,
         deleteCount: tokensAfterHeading[0].line.length,
         insertText: replacementText,
@@ -123,7 +117,7 @@ function getListSectionErrors(sectionTokens, section) {
       ? `Expected section to include unordered list item: "It looks like this lesson doesn't have any additional resources yet. Help us expand this section by contributing to our curriculum."`
       : `Must include an unordered list of ${listItemsName} in the "${section}" section`;
     listSectionErrors.push(
-      createErrorObject(
+      createError(
         tokenLineNumber,
         errorDetail,
         isAdditionalResources
@@ -145,7 +139,7 @@ function getListSectionErrors(sectionTokens, section) {
     !tokensAfterFirstContent[0].type.endsWith("_list_open")
   ) {
     listSectionErrors.push(
-      createErrorObject(
+      createError(
         tokensAfterFirstContent[0].lineNumber,
         `Only an unordered list of ${listItemsName} can follow the default content.`,
         {
@@ -169,7 +163,7 @@ function getListSectionErrors(sectionTokens, section) {
     );
 
     listSectionErrors.push(
-      createErrorObject(
+      createError(
         tokensAfterBulletListClose[0].lineNumber,
         `There should be no additional content after the unordered list of ${listItemsName}`,
         {
@@ -195,7 +189,7 @@ function getAssignmentSectionErrors(sectionTokens) {
   );
   if (!divBlockTokens.length || !hasAssignmentDiv) {
     assignmentErrors.push(
-      createErrorObject(
+      createError(
         sectionTokens[0].lineNumber,
         `Assignment sections must include an HTML div element with class="lesson-content__panel" and markdown="1" attributes`
       )

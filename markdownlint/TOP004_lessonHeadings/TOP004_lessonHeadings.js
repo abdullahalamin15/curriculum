@@ -1,51 +1,11 @@
 // Customized version of https://github.com/DavidAnson/markdownlint/blob/main/lib/md043.js
 
-function addError(onError, lineNumber, detail, context, range, fixInfo) {
-  onError({
-    lineNumber,
-    detail,
-    context,
-    range,
-    fixInfo,
-  });
-}
-function addErrorContext(
-  onError,
-  lineNumber,
-  context,
-  left,
-  right,
-  range,
-  fixInfo
-) {
-  context = ellipsify(context, left, right);
-  addError(onError, lineNumber, undefined, context, range, fixInfo);
-}
-function addErrorDetailIf(
-  onError,
-  lineNumber,
-  expected,
-  actual,
-  detail,
-  context,
-  range,
-  fixInfo
-) {
-  if (expected !== actual) {
-    addError(
-      onError,
-      lineNumber,
-      "Expected: " +
-        expected +
-        "; Actual: " +
-        actual +
-        (detail ? "; " + detail : ""),
-      context,
-      range,
-      fixInfo
-    );
-  }
-}
+const {
+  addError,
+  addErrorContext,
+  addErrorDetailIf,
+} = require("../shared/errorHelpers");
+
 function forEachHeading(params, handler) {
   let heading = null;
   for (const token of params.parsers.markdownit.tokens) {
@@ -57,18 +17,6 @@ function forEachHeading(params, handler) {
       handler(heading, token.content, token);
     }
   }
-}
-function ellipsify(text, start, end) {
-  if (text.length <= 30) {
-    // Nothing to do
-  } else if (start && end) {
-    text = text.slice(0, 15) + "..." + text.slice(-15);
-  } else if (end) {
-    text = "..." + text.slice(-30);
-  } else {
-    text = text.slice(0, 30) + "...";
-  }
-  return text;
 }
 
 module.exports = {

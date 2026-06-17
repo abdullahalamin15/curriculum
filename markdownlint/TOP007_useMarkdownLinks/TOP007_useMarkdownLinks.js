@@ -1,3 +1,5 @@
+const { getFenceLineRanges, isWithinLineRanges } = require("../shared/fenceUtils");
+
 function extractHref(link) {
   // https://regexr.com/7v3ci to test this regex
   return link.match(/(?<=href=("|'))[^"']+/)?.[0];
@@ -19,9 +21,7 @@ module.exports = {
     "https://github.com/TheOdinProject/curriculum/blob/main/markdownlint/docs/TOP007.md"
   ),
   function: function TOP007(params, onError) {
-    const fencesLineRanges = params.parsers.markdownit.tokens
-      .filter((token) => token.type === "fence")
-      .map((token) => token.map);
+    const fencesLineRanges = getFenceLineRanges(params.parsers.markdownit.tokens);
 
     const codepenLineRanges = params.lines.reduce((lineRanges, currentLine, index) => {
       const lineNumber = index + 1;
@@ -38,15 +38,11 @@ module.exports = {
       return lineRanges;
     }, []);
 
-    const isWithinIgnoredLineRange = (lineNumber) => {
-      return [...fencesLineRanges, ...codepenLineRanges].some(
-        (range) => range[0] < lineNumber && lineNumber < range[1]
-      );
-    };
+    const allIgnoredRanges = [...fencesLineRanges, ...codepenLineRanges];
 
     const anchorsToFlag = params.lines.reduce((anchors, currentLine, index) => {
       if (
-        isWithinIgnoredLineRange(index) ||
+        isWithinLineRanges(index, allIgnoredRanges) ||
         !currentLine.includes("<a ") ||
         !currentLine.includes("</a>")
       ) {
